@@ -1,0 +1,40 @@
+import ctypes
+class ResizableArray:
+    def __init__(self):
+        self._buffer_capacity=1
+        self._load_size =0
+        self._content=self._create_array(self._buffer_capacity)
+    def __len__(self):
+        return self._load_size
+    def __getitem__(self, idx):
+        if not 0 <=idx < self._load_size:
+            raise IndexError("Index out of range")
+        return self._content[idx]
+    def __repr__(self):
+        return '['+','.join(str(self._content[i]) for i in range(self._load_size))+']'
+    def _create_array(self, capacity):
+        return (capacity * ctypes.py_object)()
+    def _expand_capacity(self,new_capacity):
+        expanded_array=self._create_array(new_capacity)
+        for i in range(self._load_size):
+            expanded_array[i]=self._content[i]
+        self._content=expanded_array
+        self._buffer_capacity=new_capacity
+    def add(self, item):
+        if self._load_size==self._buffer_capacity:
+            self._expand_capacity(2*self._buffer_capacity)
+        self._content[self._load_size]=item
+        self._load_size +=1
+# Example usage
+dyn_array =ResizableArray()
+dyn_array.add(11)
+dyn_array.add(16)
+dyn_array.add(26)
+dyn_array.add(49)
+dyn_array.add(19)
+dyn_array.add(79)
+dyn_array.add(26)
+dyn_array.add(29)
+print("Array size:",len(dyn_array))
+print("Array contents:",dyn_array)
+print("Element at index 3:",dyn_array[3])
